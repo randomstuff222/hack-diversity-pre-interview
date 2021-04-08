@@ -16,7 +16,6 @@ public class ConversationMetricsCalculator {
     //Average response time
     long responseTime = 0;
     long average = 0;
-    long start = 0;
     int counterMessage = 0;
     boolean end_user = false;
     for (Message message : messages) {
@@ -24,13 +23,14 @@ public class ConversationMetricsCalculator {
       boolean current = message.isTeamMember();
       //if it is the user, then keep searching
       if (!current && !end_user) {
-        start = message.getCreatedAt();
+        average -= message.getCreatedAt();
         end_user = true;
       }
       //if it is the team member, then get the response time and add it to the variable keeping the time
       else if (current && end_user) {
-        average = average + message.getCreatedAt() - start;
-        counterMessage = counterMessage + 2;
+        average += message.getCreatedAt();
+        counterMessage++;
+        end_user = false;
       }
     }
     //once is done finding the times, then calculate the average
